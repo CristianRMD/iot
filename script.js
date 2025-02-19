@@ -21,6 +21,7 @@ const sensorSchema = new mongoose.Schema({
   BPM: Number,
   SpO2: Number,
   Movimiento: String,
+  index: Number,
   timestamp: { type: Date, default: Date.now }
 });
 
@@ -28,13 +29,14 @@ const SensorData = mongoose.model('SensorData', sensorSchema);
 
 // Ruta para recibir datos del ESP32
 app.post('/api/datos', async (req, res) => {
-  const { IR, BPM, SpO2, Movimiento } = req.body;
+  const { IR, BPM, SpO2, Movimiento,index } = req.body;
   
   const newData = new SensorData({
     IR,
     BPM,
     SpO2,
-    Movimiento
+    Movimiento,
+    index
   });
   
   try {
@@ -64,8 +66,8 @@ app.get('/movimiento', async (req, res) => {
 
   try {
     const datos = await SensorData.find().sort({ timestamp: -1 }).limit(1);
-    const {Movimiento}=datos[0];  
-    res.status(200).json({Movimiento});
+    const {Movimiento,index}=datos[0];  
+    res.status(200).json({Movimiento,index});
   } catch (err) {
     res.status(500).json({ message: 'Error al obtener los datos', error: err });
   }
