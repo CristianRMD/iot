@@ -58,3 +58,30 @@ app.get('/api/datos', async (req, res) => {
 app.listen(port, () => {
   console.log(`API corriendo en http://localhost:${port}`);
 });
+
+
+app.get('/movimiento', async (req, res) => {
+
+  try {
+    const datos = await SensorData.find().sort({ timestamp: -1 }).limit(1);
+    const {Movimiento}=datos[0];  
+    res.status(200).json(Movimiento);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al obtener los datos', error: err });
+  }
+})
+
+app.get('/EnviarMovimientoConId',async (req,res)=>{
+  const {movimiento}=req.body;
+
+
+try {
+    const datos = await SensorData.find().sort({ timestamp: -1 }).limit(1);
+    const {Movimiento}=datos[0];  
+    res.status(200).json("En prueba");
+  } catch (err) {
+    res.status(500).json({ message: 'Error al obtener los datos', error: err });
+  }
+
+
+})
