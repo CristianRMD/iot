@@ -65,7 +65,7 @@ app.get('/movimiento', async (req, res) => {
   try {
     const datos = await SensorData.find().sort({ timestamp: -1 }).limit(1);
     const {Movimiento}=datos[0];  
-    res.status(200).json(Movimiento);
+    res.status(200).json({Movimiento});
   } catch (err) {
     res.status(500).json({ message: 'Error al obtener los datos', error: err });
   }
