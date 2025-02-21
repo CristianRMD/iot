@@ -1,0 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.fila {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+h2 {
+    width: 100px;
+    text-align: right;
+    margin-right: 15px;
+}
+
+.bloques {
+    display: flex;
+    gap: 10px;
+}
+
+.bloque {
+    width: 50px;
+    height: 50px;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.bloque.seleccionado {
+    background-color: #4CAF50;
+    color: white;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
