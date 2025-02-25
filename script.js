@@ -25,19 +25,23 @@ const port = process.env.PORT || 3000;
 // 📌 1️⃣ POST - Guardar datos de sensores en Firestore
 app.post("/api/guardar-datos", async (req, res) => {
   try {
-    const { Ir, BPM, Sop2 } = req.body;
+    const { BPM, SpO2 } = req.body;
 
-    // Guardar en la colección "datos_sensores"
-    await db.collection("datos_sensores").add({
-      Ir,
+    // Validación de datos
+    if (BPM === undefined || SpO2 === undefined) {
+      return res.status(400).json({ message: "Datos incompletos o inválidos" });
+    }
+
+    // Guardar en Firestore
+    await admin.firestore().collection("datosFisiologicos").add({
       BPM,
-      Sop2,
+      SpO2,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    res.json({ message: "Datos de sensores guardados correctamente" });
+    res.json({ message: "Datos guardados correctamente" });
   } catch (err) {
-    res.status(500).json({ message: "Error al guardar datos", error: err });
+    res.status(500).json({ message: "Error al guardar datos", error: err.message });
   }
 });
 
@@ -103,27 +107,11 @@ app.get("/api/datos", async (req, res) => {
 });
 
 // 📌 4️⃣ GET - Obtener los últimos 50 valores de IR
-app.get("/api/ultimos-ir", async (req, res) => {
+app.get("/api/ultimos-bpm", async (req, res) => {
   try {
     const snapshot = await db
-      .collection("datos_sensores")
+      .collection("datosFisiologicos")
       .orderBy("timestamp", "desc")
-      .limit(50)
-      .get();
-
-    const irData = snapshot.docs.map((doc) => doc.data().Ir);
-    res.json(irData);
-  } catch (err) {
-    res.status(500).json({ message: "Error al obtener datos de IR", error: err });
-  }
-});
-
-// 📌 5️⃣ GET - Obtener los primeros 50 valores de BPM
-app.get("/api/primeros-bpm", async (req, res) => {
-  try {
-    const snapshot = await db
-      .collection("datos_sensores")
-      .orderBy("timestamp", "asc")
       .limit(50)
       .get();
 
@@ -133,6 +121,24 @@ app.get("/api/primeros-bpm", async (req, res) => {
     res.status(500).json({ message: "Error al obtener datos de BPM", error: err });
   }
 });
+
+
+// 📌 5️⃣ GET - Obtener los primeros 50 valores de BPM
+app.get("/api/ultimos-spo2", async (req, res) => {
+  try {
+    const snapshot = await db
+      .collection("datosFisiologicos")
+      .orderBy("timestamp", "desc")
+      .limit(50)
+      .get();
+
+    const spo2Data = snapshot.docs.map((doc) => doc.data().SpO2);
+    res.json(spo2Data);
+  } catch (err) {
+    res.status(500).json({ message: "Error al obtener datos de SpO2", error: err });
+  }
+});
+
 
 // 📌 Iniciar servidor
 app.listen(port, () => {
