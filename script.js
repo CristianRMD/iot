@@ -115,7 +115,7 @@ app.get("/api/ultimos-bpm", async (req, res) => {
       .limit(50)
       .get();
 
-    const bpmData = snapshot.docs.map((doc) => doc.data().BPM);
+    const bpmData = snapshot.docs.map((doc) => doc.data().BPM).reverse();
     res.json(bpmData);
   } catch (err) {
     res.status(500).json({ message: "Error al obtener datos de BPM", error: err });
@@ -123,7 +123,7 @@ app.get("/api/ultimos-bpm", async (req, res) => {
 });
 
 
-// 📌 5️⃣ GET - Obtener los primeros 50 valores de BPM
+// 📌 5️⃣ GET - Obtener los ultimo 50 valores de BPM
 app.get("/api/ultimos-spo2", async (req, res) => {
   try {
     const snapshot = await db
@@ -132,7 +132,7 @@ app.get("/api/ultimos-spo2", async (req, res) => {
       .limit(50)
       .get();
 
-    const spo2Data = snapshot.docs.map((doc) => doc.data().SpO2);
+    const spo2Data = snapshot.docs.map((doc) => doc.data().SpO2).reverse();
     res.json(spo2Data);
   } catch (err) {
     res.status(500).json({ message: "Error al obtener datos de SpO2", error: err });
