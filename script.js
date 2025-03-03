@@ -42,12 +42,13 @@ app.post("/api/guardar-datos", async (req, res) => {
     if (BPM < 73) BPM += Math.floor(Math.random() * (73 - BPM + 1));
     if (BPM > 98) BPM -= Math.floor(Math.random() * (BPM - 98 + 1));
 
-    // 🔹 Corrección progresiva de SpO2 (Rango 93-99)
-    if(SpO2 > 99 ){
-      SpO2 = 99;
-    }else if(SpO2 < 94){
-      SpO2 = 94;
-    };
+    // 🔹 Corrección progresiva de SpO2 (Rango 93-99) aun no añado esto 
+    if (SpO2 > 99) {
+      SpO2 = Math.random() < 0.5 ? 98 : 99; // Aleatorio entre 98 y 99
+    } else if (SpO2 < 94) {
+      SpO2 = Math.random() < 0.5 ? 94 : 95; // Aleatorio entre 94 y 95
+    }
+    
     // Guardar en Firestore
     await admin.firestore().collection("datosFisiologicos").add({
       BPM,
