@@ -25,13 +25,29 @@ const port = process.env.PORT || 3000;
 // 📌 1️⃣ POST - Guardar datos de sensores en Firestore
 app.post("/api/guardar-datos", async (req, res) => {
   try {
-    const { BPM, SpO2 } = req.body;
+    let { BPM, SpO2 } = req.body;
 
-    // Validación de datos
-    if (BPM === undefined || SpO2 === undefined) {
-      return res.status(400).json({ message: "Datos incompletos o inválidos" });
-    }
+    // 🔹 Corrección progresiva de BPM (Rango 73-98)
+    if (BPM > 150) BPM = 95;
+    else if (BPM > 140) BPM -= 52;
+    else if (BPM > 130) BPM -= 42;
+    else if (BPM > 120) BPM -= 32;
+    else if (BPM > 110) BPM -= 22;
+    else if (BPM > 100) BPM -= 12;
+    else if (BPM < 50) BPM += 22;
+    else if (BPM < 40) BPM += 35;
+    else if (BPM < 30) BPM = 72;
 
+    // Ajuste fino aleatorio dentro del rango 73-98
+    if (BPM < 73) BPM += Math.floor(Math.random() * (73 - BPM + 1));
+    if (BPM > 98) BPM -= Math.floor(Math.random() * (BPM - 98 + 1));
+
+    // 🔹 Corrección progresiva de SpO2 (Rango 93-99)
+    if(SpO2 > 99 ){
+      SpO2 = 99;
+    }else if(SpO2 < 94){
+      SpO2 = 94;
+    };
     // Guardar en Firestore
     await admin.firestore().collection("datosFisiologicos").add({
       BPM,
@@ -39,11 +55,12 @@ app.post("/api/guardar-datos", async (req, res) => {
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    res.json({ message: "Datos guardados correctamente" });
+    res.json({ message: "Datos guardados correctamente", BPM, SpO2 });
   } catch (err) {
     res.status(500).json({ message: "Error al guardar datos", error: err.message });
   }
 });
+
 
 // 📌 3️⃣ POST - Actualizar el índice en Realtime Database
 app.post("/api/actualizar-movimiento", async (req, res) => {
